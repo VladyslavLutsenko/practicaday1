@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student</title>
+    <style>
+        table, th, tr, td{
+            border: 1px  solid black;
+            border-collapse: collapse;
+            padding: 10px;
+            
+        }
+        .selected{
+            background-color: limegreen;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Group</th>
+                <th>Year</th>
+                <th>Pract</th>
+                <th>Remove</th>
+            </tr>
+            <tr v-for="(student, n) in students" v-bind:class="[isSelected[n] ? 'selected' : '' ]">
+                <td>{{ student.name }}</td>
+                <td>{{ student.group }}</td>
+                <td>{{ student.year }}</td>
+                <td>
+                    <input type="checkbox" v-bind:checked="student.pract" onclick="return false;">
+                </td>
+                <td><button @click="removeStudent(n)">Remove</button></td>
+            </tr>
+        </table>
+        <br>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Group</th>
+                <th>Year</th>
+                <th>Pract</th>
+                <th>Remove</th>
+            </tr>
+            <tr v-for="(student, n) in students_parsed" v-bind:class="[isSelected[n] ? 'selected' : '' ]">
+                <td>{{ student.name }}</td>
+                <td>{{ student.group }}</td>
+                <td>{{ student.year }}</td>
+                <td>
+                    <input type="checkbox" v-bind:checked="student.isDonePr" onclick="return false;">
+                </td>
+                <td><button @click="removeStudent(n)">Remove</button></td>
+            </tr>
+        </table>
+        <br>
+        <p>
+            Name:
+            <input type="text" v-model.trim="selectedName">
+        </p>
+        <p>
+            Group:
+            <select v-model="selectedGroup">
+                <option value="Rpz 17 1/9">Rpz 17 1/9</option>
+                <option value="Rpz 17 2/9">Rpz 17 2/9</option>
+            </select>
+        </p>
+       <p>
+           Year:
+           <input type="number" v-model.number="selectedYear">
+       </p>
+        <p>
+            Pract:
+            <input type="checkbox" value=true v-model="selectedPract">
+        </p>
+        <p>
+            <button @click="addStudent">Add</button>
+        </p>
+        <br>
+        <p>
+            Find:
+            <input type="text" v-model="findName">
+        </p>
+    </div>
+    <br>
+    <div id="converter">
+        <p>
+            Enter Amount: 
+            <input type="number" v-model.number="enterAmount">
+        </p>
+        <p>
+            Convert From: 
+            <select v-model="selectedFrom">
+                <option value="UAH">UAH</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="RUR">RUR</option>
+                <option value="BTC">BTC</option>
+            </select>
+            Convert To: 
+            <select v-model="selectedTo">
+                <option value="UAH">UAH</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="RUR">RUR</option>
+                <option value="BTC">BTC</option>
+            </select>
+        </p>
+        <p v-if="resultAmount">
+            {{enterAmount}} {{ selectedFrom }} equals {{resultAmount}} {{ selectedTo }}
+        </p>
+        
+    </div>
+    <script src="main.js"></script>
+</body>
+
