@@ -212,14 +212,12 @@ export default {
     mounted: function(){
         Vue.axios.get(this.url).then((response) =>{
             this.students_parsed=response.data;
-            console.log(response.data);
         })
         Vue.axios.get(this.url_p).then((response) =>{
             this.info[1].price=response.data[0].buy;
             this.info[2].price=response.data[1].buy;
             this.info[3].price=response.data[2].buy;
             this.info[4].price=response.data[3].buy;
-            console.log(this.info);
         })
     },
     filters : {
