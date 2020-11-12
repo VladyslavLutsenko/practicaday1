@@ -1,7 +1,14 @@
 <template>
     <div>
         <h3>{{student.name}}</h3>
-        <p><img v-bind:src="student.photo" height="200" alt="student"></p>
+        <p><img @click="show" v-bind:src="student.photo" class="pointer" height="200" alt="student"></p>
+        <modal name="my-first-modal" :width="600" :height="600">
+            <div>
+                <img v-bind:src="student.photo" height="550" alt="student">
+                <br>
+                <button @click="hide">Close</button>
+            </div>
+        </modal>
         <p>Group: {{student.group}}</p>
         <p>
             Pract: 
@@ -32,5 +39,19 @@ export default {
             this.student=response.data;
         })
     },
+    methods: {
+        show () {
+            this.$modal.show('my-first-modal');
+        },
+        hide () {
+            this.$modal.hide('my-first-modal');
+        }
+    }
 }
 </script>
+
+<style  scoped>
+    .pointer{
+        cursor: pointer;
+    }
+</style>
