@@ -59,9 +59,11 @@
             <tr v-for="student in students_parsed" v-bind:key="student._id" v-bind:class="[isSelected[student._id] ? 'selected' : '' ]">
                 <td><img v-bind:src="student.photo" height="50" alt="student" ></td>
                 <td>
-                    <span v-if="isUpdating.id!=student._id">
-                        {{ student.name }}
-                    </span>
+                    <p v-if="isUpdating.id!=student._id">
+                        <router-link v-bind:to="'/student-info/'+student._id">
+                            {{student.name}}
+                        </router-link>
+                    </p>
                     <input v-if="isUpdating.status && (isUpdating.id==student._id)" type="text" v-model.trim="updateName_p">
                 </td>
                 <td>
@@ -141,8 +143,12 @@
 
 <script>
 import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use( VueAxios, axios)
 
 export default {
+    name: 'Students',
     data(){
         return {
             url: 'http://46.101.212.195:3000/students',
@@ -245,11 +251,11 @@ export default {
                 group: this.selectedGroup_p,
                 isDonePr: this.selectedPract_p
             };
-            Vue.axios.post(this.url, postBody).then((response) =>{
+            this.axios.post(this.url, postBody).then((response) =>{
                 console.log(response.data);
                 
             }).then(()=>{
-                Vue.axios.get(this.url).then((response) =>{
+                this.axios.get(this.url).then((response) =>{
                     var newStudent={};
                     var index=response.data.length;
                     index--;
@@ -267,7 +273,7 @@ export default {
         },
         removeStudent_p(n) {
             var url_mod=this.url+`/${n}`;
-            Vue.axios.delete(url_mod).then((response) =>{
+            this.axios.delete(url_mod).then((response) =>{
                 console.log(response.data);
             })
             var i=0;
@@ -297,7 +303,7 @@ export default {
                 group: this.updateGroup_p,
                 isDonePr: this.updatePract_p
             };
-            Vue.axios.put(url_mod, postBody).then((response) =>{
+            this.axios.put(url_mod, postBody).then((response) =>{
                 console.log(response.data);
             })
             this.students_parsed.forEach(element => {
