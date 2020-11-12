@@ -135,7 +135,7 @@
             </select>
         </p>
         <p v-if="resultAmount">
-            {{enterAmount}} {{ selectedFrom }} equals {{resultAmount}} {{ selectedTo }}
+            {{enterAmount}} {{ selectedFrom }} equals {{resultAmount | round}} {{ selectedTo }}
         </p>
 
     </div>
@@ -221,6 +221,11 @@ export default {
             this.info[4].price=response.data[3].buy;
             console.log(this.info);
         })
+    },
+    filters : {
+        round : function(value) {
+            return value.toFixed(2);
+        }
     },
     methods: {
         addStudent() {
