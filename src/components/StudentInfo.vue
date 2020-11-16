@@ -14,6 +14,8 @@
             Pract: 
             <input type="checkbox" v-bind:checked="student.isDonePr" onclick="return false;">
         </p>
+        <br>
+        <h4>Total: {{studentsCount}}</h4>
         
         
         
@@ -38,6 +40,11 @@ export default {
         Vue.axios.get(this.url+this.id).then((response) =>{
             this.student=response.data;
         })
+    },
+    computed:{
+        studentsCount () {
+            return this.$store.getters.getCount
+        }
     },
     methods: {
         show () {

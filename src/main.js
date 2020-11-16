@@ -7,6 +7,7 @@ import VueAxios from 'vue-axios'
 import App from './App.vue'
 import Students from './components/Students.vue'
 import StudentInfo from './components/StudentInfo.vue'
+import store from './store.js'
 
 const routes = [
    { path: '/', component: Students },
@@ -24,5 +25,6 @@ Vue.use(VModal)
 new Vue({
    render: h => h(App),
    el: '#app',
-   router
+   router,
+   store
 })

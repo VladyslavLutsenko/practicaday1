@@ -1,6 +1,10 @@
 <template>
     <div>
-        <table>
+        <label class="switch">
+            <input type="checkbox" id="one" @change="sliderchange()">
+            <span class="slider round"></span>
+        </label>
+        <!-- <table>
             <tr>
                 <th>Name</th>
                 <th>Group</th>
@@ -46,7 +50,7 @@
             Find:
             <input type="text" v-model="findName">
         </p>
-        <br>
+        <br> -->
         <table>
             <tr>
                 <th>Photo</th>
@@ -87,57 +91,59 @@
                 </td>
             </tr>
         </table>
-        <br>
-        <p>
-            Find:
-            <input type="text" v-model="findName_2">
-        </p>
-        <br>
-        <p>
-            Name:
-            <input type="text" v-model.trim="selectedName_p">
-        </p>
-        <p>
-            Group:
-            <select v-model="selectedGroup_p">
-                <option value="Rpz 17 1/9">Rpz 17 1/9</option>
-                <option value="Rpz 17 2/9">Rpz 17 2/9</option>
-            </select>
-        </p>
-        <p>
-            Pract:
-            <input type="checkbox" value=true v-model="selectedPract_p">
-        </p>
-        <p>
-            <button @click="addStudent_p">Add</button>
-        </p>
-        <br>
-        <p>
-            Enter Amount: 
-            <input type="number" v-model.number="enterAmount">
-        </p>
-        <p>
-            Convert From: 
-            <select v-model="selectedFrom">
-                <option value="UAH">UAH</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="RUR">RUR</option>
-                <option value="BTC">BTC</option>
-            </select>
-            Convert To: 
-            <select v-model="selectedTo">
-                <option value="UAH">UAH</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="RUR">RUR</option>
-                <option value="BTC">BTC</option>
-            </select>
-        </p>
-        <p v-if="resultAmount">
-            {{enterAmount}} {{ selectedFrom }} equals {{resultAmount | round}} {{ selectedTo }}
-        </p>
-
+        <h4>Total: {{studentsCount}}</h4>
+        <div>
+            <p>
+                Find:
+                <input type="text" v-model="findName_2">
+            </p>
+            <br>
+            <p>
+                Name:
+                <input type="text" v-model.trim="selectedName_p">
+            </p>
+            <p>
+                Group:
+                <select v-model="selectedGroup_p">
+                    <option value="Rpz 17 1/9">Rpz 17 1/9</option>
+                    <option value="Rpz 17 2/9">Rpz 17 2/9</option>
+                </select>
+            </p>
+            <p>
+                Pract:
+                <input type="checkbox" value=true v-model="selectedPract_p">
+            </p>
+            <p>
+                <button @click="addStudent_p">Add</button>
+            </p>
+        </div>
+        <div>
+            <p>
+                Enter Amount: 
+                <input type="number" v-model.number="enterAmount">
+            </p>
+            <p>
+                Convert From: 
+                <select v-model="selectedFrom">
+                    <option value="UAH">UAH</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="RUR">RUR</option>
+                    <option value="BTC">BTC</option>
+                </select>
+                Convert To: 
+                <select v-model="selectedTo">
+                    <option value="UAH">UAH</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="RUR">RUR</option>
+                    <option value="BTC">BTC</option>
+                </select>
+            </p>
+            <p v-if="resultAmount">
+                {{enterAmount}} {{ selectedFrom }} equals {{resultAmount | round}} {{ selectedTo }}
+            </p>
+        </div>
     </div>
 </template>
 
@@ -179,7 +185,7 @@ export default {
                 {currency: "EUR", price: undefined},
                 {currency: "RUR", price: undefined},
                 {currency: "BTC", price: undefined},
-            ]
+            ],
         }
     },
     watch: {
@@ -207,11 +213,31 @@ export default {
             });
             ratio=tempFrom/tempTo;
             return this.enterAmount*ratio;
+        },
+        studentsCount () {
+            return this.$store.getters.getCount
         }
     },
     mounted: function(){
+        let chbox;
+        chbox=document.getElementById('one');
+        if (localStorage.getItem('theme')) {
+            try {
+                this.$store.commit('setTheme', localStorage.getItem('theme'));
+            } catch(e) {
+                localStorage.removeItem('theme');
+            }
+        }
+        if (this.$store.getters.getTheme=='1') {
+            this.includeCSS('../style/1.css');
+            chbox.checked = true;
+        } else if (this.$store.getters.getTheme=='2') {
+            this.includeCSS('../style/2.css');
+            chbox.checked = false;
+        }
         Vue.axios.get(this.url).then((response) =>{
             this.students_parsed=response.data;
+            this.$store.commit('setCount', this.students_parsed.length);
         })
         Vue.axios.get(this.url_p).then((response) =>{
             this.info[1].price=response.data[0].buy;
@@ -261,6 +287,7 @@ export default {
                     index--;
                     newStudent=response.data[index];
                     this.students_parsed.push(newStudent);
+                    this.$store.commit('setCount', this.students_parsed.length);
                     console.log(response.data);
                 })
             })
@@ -283,6 +310,8 @@ export default {
                 }
                 i++;
             });
+            this.$store.commit('setCount', this.students_parsed.length);
+
         },
         updateInit(id){
             this.isUpdating.status= true;
@@ -328,6 +357,27 @@ export default {
                     this.isSelected[student._id]=false;
                 }
             });
+        },
+        sliderchange(){
+            let chbox;
+            chbox=document.getElementById('one');
+            if (chbox.checked) {
+                console.log('Выбран');
+                this.includeCSS('../style/1.css');
+                localStorage.setItem ('theme', '1');
+            }
+            else {
+                console.log('Не выбран');
+                this.includeCSS('../style/2.css');
+                localStorage.setItem ('theme', '2');
+            }
+        },
+        includeCSS(aFile, aRel){
+            let head = window.document.getElementsByTagName('head')[0]
+            let style = window.document.createElement('link')
+            style.href = aFile
+            style.rel = aRel || 'stylesheet'
+            head.appendChild(style)
         }
     }
 }
@@ -341,5 +391,59 @@ export default {
         }
     .selected{
         background-color: limegreen;
+    }
+    .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    }
+    
+    .switch input {display:none;}
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+    
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+    
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+    
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+    
+    .slider.round:before {
+        border-radius: 50%;
     }
 </style>
