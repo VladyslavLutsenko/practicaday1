@@ -83,7 +83,7 @@
                     <input v-if="isUpdating.id!=student._id" type="checkbox" v-bind:checked="student.isDonePr" onclick="return false;">
                     <input v-if="isUpdating.status && (isUpdating.id==student._id)" type="checkbox" value=true v-model="updatePract_p">
                 </td>
-                <td v-if="!isUpdating.status"><button @click="removeStudent_p(student._id)">Remove</button></td>
+                <td v-if="!isUpdating.status"><button v-if="student.group === currentUser.group" @click="removeStudent_p(student._id)">Remove</button></td>
                 <td >
                     
                     <button v-if="!isUpdating.status" @click="updateInit(student._id)">Change</button>
@@ -216,6 +216,9 @@ export default {
         },
         studentsCount () {
             return this.$store.getters.getCount
+        },
+        currentUser () {
+            return this.$store.getters.getUser
         }
     },
     mounted: function(){
